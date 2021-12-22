@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/c4fb182b-2bda-402b-871f-99369481fb5c/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/horizonviewapi",
-    "appService.deploySubpath": "horizonview-api"
-}
