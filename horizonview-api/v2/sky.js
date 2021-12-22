@@ -1,86 +1,58 @@
-const { Astronomy, Angle, GeographicCoordinates } = require('../astronomy');
+const Astronomy = require('./utils/astronomy.js');
 const DateTime = require('./utils/datetime');
 
-const NakedEyeObjects = ['Sun', 'Moon', 'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn'];
+const Bodies = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'];
 
-const Bodies = Astronomy.Body.filter((body) => ['planet', undefined].includes(body.BodyType));
+function ParseDate(text) {
+    const d = new Date(text);
+    if (!Number.isFinite(d.getTime())) {
+        return new Date();
+    }
+    return d;
+}
 
 class Sky {
     constructor(opts = {}) {
         const defaults = {
             elevation: 0,
-            time: DateTime.create().utc(false).toDate(),
+            time: new Date(),
         };
 
         let options = Object.assign({}, defaults, opts);
 
-        this.location = new GeographicCoordinates(options.latitude, options.longitude, options.elevation);
-        this.time = Astronomy.DayValue(options.time);
+        this.latitude = options.latitude;
+        this.longitude = options.longitude;
+        this.observer = new Astronomy.Observer(options.latitude, options.longitude, 0);
+        this.date = ParseDate(options.time);
     }
 
     get(options = {}) {
         let output = [];
-        Bodies.forEach((body) => {
+        for (let body of Bodies) {
             let item = {
-                name: body.Name,
-                type: body.BodyType,
+                name: body,
             };
 
-            const eq = body.EquatorialCoordinates(this.time, this.location);
-            const rac = this.getRightAscension(eq.longitude);
-            const dec = this.getDeclination(eq.latitude);
+            const date = new Date();
 
-            if (item.type) {
-                const hc = body.HorizontalCoordinates(this.time, this.location);
-                item.aboveHorizon = hc.altitude > 0;
-                item.altitude = hc.altitude;
-            }
+            let equ_2000 = Astronomy.Equator(body, this.date, this.observer, false, true);
+            let equ_ofdate = Astronomy.Equator(body, this.date, this.observer, true, true);
+            let hor = Astronomy.Horizon(this.date, this.observer, equ_ofdate.ra, equ_ofdate.dec, 'normal');
 
-            if (options.showCoords) {
-                item.rightAscension = rac;
-                item.declination = dec;
-            }
+            item.aboveHorizon = hor.altitude > 0;
+            item.altitude = hor.altitude;
+            item.azimuth = hor.azimuth;
+            item.rightAscension = equ_2000.ra;
+            item.declination = equ_2000.dec;
 
-            item.nakedEyeObject = NakedEyeObjects.indexOf(body.name) > 0;
-
-            delete item.type;
             output.push(item);
-        });
-
-        output = output.filter((item) => item.aboveHorizon === true);
-
-        return output;
-    }
-
-    getRightAscension(ra) {
-        const dms = Angle.DMS(ra);
-        if (dms.negative) {
-            return null;
         }
 
-        const hours = Number(dms.degrees);
-        const minutes = Number(dms.minutes);
-        const seconds = Number(dms.seconds);
+        if (options.onlyAboveHorizon) {
+            output = output.filter((item) => item.aboveHorizon === true);
+        }
 
-        return {
-            hours,
-            minutes,
-            seconds,
-        };
-    }
-
-    getDeclination(dec) {
-        const dms = Angle.DMS(dec);
-
-        const degrees = Number(dms.degrees);
-        const arcminutes = Number(dms.minutes);
-        const arcseconds = Number(dms.seconds);
-
-        return {
-            degrees: dms.negative ? degrees * -1 : degrees,
-            arcminutes,
-            arcseconds,
-        };
+        return output;
     }
 }
 

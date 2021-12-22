@@ -2,22 +2,29 @@
 #FONTS
 \*------------------------------------*/
 
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    src: url('../fonts/Inter-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-weight: 500;
+    src: url('../fonts/Inter-Medium.woff2') format('woff2');
+}
+
 /*------------------------------------*\
 #Variables
 \*------------------------------------*/
 
 :root {
     /* colors */
-    --color-back: #cce7ff;
-    --color-front: #0f3557;
+    --color-back: #51a4fb;
+    --color-front: #003564;
     /* opacity */
 
     /* transitions */
-}
-
-.is-night {
-    --color-front: var(--color-back);
-    --color-back: var(--color-front);
 }
 
 /*------------------------------------*\
@@ -33,7 +40,9 @@
 html {
     font-size: 16px;
     line-height: 1.5;
-    font-family: 'Work Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -76,11 +85,6 @@ Elements: Images
 Default markup for images to make them responsive
 */
 
-img {
-    max-width: 100%;
-    vertical-align: top;
-}
-
 /*
     Elements: typography
     ---
@@ -96,19 +100,16 @@ h3 {
 h1 {
     font-size: 36px;
     line-height: 48px;
-    margin: 0 0 24px;
 }
 
 h2 {
     font-size: 32px;
     line-height: 40px;
-    margin: 0 0 24px;
 }
 
 h3 {
     font-size: 26px;
     line-height: 32px;
-    margin: 0 0 24px;
 }
 
 h4,
@@ -206,140 +207,61 @@ input::placeholder {
     Small button reset object
 */
 
-.o-button-reset {
-    border: none;
-    margin: 0;
-    padding: 0;
-    width: auto;
-    overflow: visible;
-    background: transparent;
-
-    /* inherit font & color from ancestor */
-    color: inherit;
-    font: inherit;
-
-    /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
-    line-height: normal;
-
-    /* Corrects font smoothing for webkit */
-    -webkit-font-smoothing: inherit;
-    -moz-osx-font-smoothing: inherit;
-
-    /* Corrects inability to style clickable `input` types in iOS */
-    -webkit-appearance: none;
-}
-
-/*
-    Object: Hide accessible
-    ---
-    Accessibly hide any element
-*/
-
-.o-hide-accessible {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-}
-
 /*------------------------------------*\
 #COMPONENTS
 \*------------------------------------*/
 
+.container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 10% 10fr 80fr;
+    gap: 0px 0px;
+    grid-template-areas:
+        'header'
+        'datetimepicker'
+        'pano';
+}
+.pano {
+    justify-self: stretch;
+    align-self: stretch;
+    grid-area: pano;
+    height: 75vh;
+}
+
+.datetimepicker {
+    grid-area: datetimepicker;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 12.25vh;
+}
+
+.header {
+    grid-area: header;
+    height: 12.25vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.panolens-infospot {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 1.25em;
+}
+
 /*
     Component: Logo
+    
     ---
     Website main logo
 */
-
-.c-logo {
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    font-weight: 400;
+.c-svg {
+    height: 12.25vh;
+    width: 90vw;
 }
 
-/*
-    Component: Sun
-    ---
-    The sun
-*/
-
-.c-sun {
-    width: 22px;
-    height: 22px;
-    fill: var(--color-front);
-}
-
-.c-logo .c-sun {
-    margin-right: 8px;
-}
-
-.c-app {
-    max-width: 400px;
-    margin: auto;
-    display: block;
-}
-
-.c-app__summary {
-    line-height: 40px;
-    font-size: 28px;
-}
-/*
-    Component: App
-    ---
-    Main app wrapper
-*/
-.c-horizon {
-}
-
-.c-horizon__line {
-    border-top: 1px solid var(--color-front);
-    padding-top: 7px;
-    margin-bottom: 34px;
-}
-
-.c-horizon__time {
-}
-
-.c-horizon__time + .c-horizon__time {
-    float: right;
-}
-
-.c-horizon__sky-wrapper {
-    position: relative;
-    height: 200px;
-    overflow: hidden;
-    padding-top: 22px;
-    padding-right: 40px;
-}
-
-.c-horizon__sky {
-    position: relative;
-    height: 100%;
-}
-
-.c-horizon__sun {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    max-width: 400px;
-    transform: translateY(22px);
-}
-
-.c-horizon__sun::before {
-    content: attr(data-time);
-    display: block;
-    text-align: center;
-    margin-bottom: 8px;
-    font-size: 12px;
-}
 /*
     Component: Horizon
     ---
@@ -350,15 +272,6 @@ input::placeholder {
 #UTILITIES
 \*------------------------------------*/
 
-.u-muted {
-    opacity: 0.6;
-}
-
-.u-align__bottom {
-    position: absolute;
-    bottom: 0;
-    max-width: 400px;
-}
 /*
     Utilities: Mute
     Mute with opacity
@@ -387,8 +300,8 @@ input::placeholder {
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-back: #0f3557;
-        --color-front: #cce7ff;
+        --color-back: #003564;
+        --color-front: #51a4fb;
     }
 }
 
