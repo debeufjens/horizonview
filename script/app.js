@@ -51,7 +51,18 @@ const createDatePicker = () => {
         defaultDate: Date.now(),
         onChange: function (selectedDates, dateStr, instance) {
             viewer.dispose();
-            drawPano(dateStr.replace(' ', 'T'));
+            navigator.geolocation.getCurrentPosition(
+                function (location) {
+                    currDate = dateStr.replace(' ', 'T');
+                    latPos = location.coords.latitude;
+                    lonPos = location.coords.longitude;
+                    drawPano(currDate, latPos, lonPos);
+                },
+                function () {
+                    currDate = dateStr.replace(' ', 'T');
+                    drawPano(currDate);
+                }
+            );
         },
     });
     console.log();
